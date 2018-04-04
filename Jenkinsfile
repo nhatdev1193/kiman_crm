@@ -9,10 +9,14 @@ node {
       rvm use 2.5.0'''
   }
 
-  stage("Bundle Install") {
+  stage("Install bundler") {
     sh '''#!/bin/bash -l
 
-      gem install bundler
+      gem install bundler'''
+  }
+
+  stage("Install bundle") {
+    sh '''#!/bin/bash -l
 
       bundle install'''
   }
