@@ -1,0 +1,18 @@
+<% # Set the title attribute for this page
+   content_for :title do %>
+    Hợp đồng
+<% end %>
+
+<% # Set the title of content
+   content_for :content_header do %>
+  <div class="row">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-8"></div>
+  </div>
+<% end %>
+
+<div class="box box-success">
+  <div class="box-body">
+    <%= render 'table' %>
+  </div><!-- /.box-body -->
+</div><!-- /.box -->

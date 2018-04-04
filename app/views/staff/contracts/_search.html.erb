@@ -1,0 +1,22 @@
+<tr>
+  <td>
+    <button type="submit" class="btn btn-primary-outline">
+      <i class="glyphicon glyphicon-search"></i>
+    </button>
+  </td>
+  <td><%= search_field_tag 's[id]', params[:s].try(:[], :id) || nil, class: 'form-control' %></td>
+  <td><%= search_field_tag 's[full_name]', params[:s].try(:[], :full_name) || nil, class: 'form-control' %></td>
+  <td>
+    <%= select_tag 's[status]', options_for_select(Contract.statuses.map { |k, v| [k.humanize.capitalize, v] }, params[:s].try(:[], :status) || nil),
+                                prompt: 'Chọn', class: 'form-control select2' %>
+  </td>
+  <td>
+    <%= select_tag 's[organization_id]', options_from_collection_for_select(Organization.all, :id, :name, params[:s].try(:[], :organization_id) || nil),
+                                         prompt: 'Chọn', class: 'form-control select2' %>
+  </td>
+  <td><%= search_field_tag 's[tele_evaluate]', params[:s].try(:[], :tele_evaluate) || nil, class: 'form-control' %></td>
+  <td><%= search_field_tag 's[reference_evaluate]', params[:s].try(:[], :reference_evaluate) || nil, class: 'form-control' %></td>
+  <td><%= search_field_tag 's[business_evaluate]', params[:s].try(:[], :business_evaluate) || nil, class: 'form-control' %></td>
+  <td><%= search_field_tag 's[property_evaluate]', params[:s].try(:[], :property_evaluate) || nil, class: 'form-control' %></td>
+  <td></td>
+</tr>

@@ -1,0 +1,68 @@
+<% if @contracts.size > 0 %>
+  <div class="table-responsive">
+    <%= form_with url: staff_contracts_path, method: :get, local: true, id: 'contract-seach-form' do %>
+      <table class="table table-hover table-bordered table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th><%= sortable 'id', 'ID HĐ', @condition_params %></th>
+            <th><%= sortable 'full_name', 'Họ và tên KH', @condition_params %></th>
+            <th><%= sortable 'status', 'Trạng thái', @condition_params %></th>
+            <th><%= sortable 'organization_id', 'Chi nhánh', @condition_params %></th>
+            <th>Thẩm tele</th>
+            <th>Thẩm tham chiếu</th>
+            <th>Thẩm KD tại chỗ</th>
+            <th>Thẩm nhà</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render 'search' %>
+          <% @contracts.each do |contract| %>
+            <tr>
+              <td>
+                <div class="checkbox no-margin">
+                  <label class="no-padding">
+                    <input type="checkbox"
+                           class="i-check"
+                           value="<%= contract.id %>"
+                           data-module="select_person">
+                  </label>
+                </div>
+              </td>
+              <td><%= contract.id %></td>
+              <td><%= contract.person.last_name %> <%= contract.person.first_name %></td>
+              <td><%= contract.status %></td>
+              <td><%= contract.person.organization.name %></td>
+              <td><%= contract.tele_evaluate.evaluate_status %></td>
+              <td><%= contract.reference_evaluate&.evaluate_status %></td>
+              <td><%= contract.business_evaluate&.evaluate_status %></td>
+              <td><%= contract.property_evaluate.evaluate_status %></td>
+              <td>
+                <%= link_to '', class: 'btn btn-sm btn-primary' do %>
+                  <%= fa_icon 'address-card' %> Xem chi tiết
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div><!-- /.table-responsive -->
+
+  <div class="table-pagination">
+    <div class="form-inline rows-per-page">
+      Số mục hiển thị trên trang
+
+      <%= select_tag('',
+                     options_for_select([25, 50, 100], params[:per_page]),
+                     { class: 'form-control will_paginate_per_page' }) %>
+    </div>
+
+    <div class="text-center">
+      <%= will_paginate @contracts, renderer: BootstrapPagination::Rails, class: 'no-margin' %>
+    </div>
+  </div>
+<% else %>
+  Không có kết quả nào
+<% end %>

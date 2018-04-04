@@ -1,0 +1,16 @@
+{
+  "name": "KimanCRM",
+  "version": "0.0.1",
+  "authors": [
+    "Dang Nguyen <pandabamboo90@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "admin-lte": "^2.4.3",
+    "jqvmap": "^1.5.1",
+    "postscribe": "^2.0.8",
+    "blueimp-file-upload": "*",
+    "lightgallery": "*"
+  }
+}

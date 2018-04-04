@@ -1,0 +1,206 @@
+<% @is_student_product = @current_step.product.name == 'Student Loan' %>
+<%= form_tag(staff_person_path(@person), {remote: true, role: 'form', method: 'put', id: 'profile-form', class: 'form-horizontal'}) do %>
+  <!--Hidden field for sending necessary params to server -->
+  <%= hidden_field_tag 'object_id', @person.id %>
+  <%= hidden_field_tag 'step', @current_step.id %>
+
+  <div class="box box-primary">
+    <div class="box-header with-border">
+      <div class="clearfix">
+        <div class="box-tools pull-right">
+          <button data-toggle="modal" data-target="#modal-assign-people-owner"
+                  data-module="mass_assign_owner"
+                  type="button" class="btn btn-success">
+            <%= fa_icon 'user-circle' %> Chỉ định người phụ trách
+          </button>
+
+          <%= link_to staff_person_path(@person),
+                      method: :delete,
+                      class: 'btn btn-danger',
+                      data: { confirm: 'Bạn có chắc chắn muốn archive hồ sơ này không ?' } do %>
+            <%= fa_icon 'archive' %> Archive hồ sơ
+          <% end %>
+
+          <button type="button" id="btn-create-contract" class="btn btn-primary">
+            <%= fa_icon 'exchange-alt' %> Tạo hợp đồng
+          </button>
+
+          <button type="button" id="btn-edit-profile" class="btn btn-primary">
+            <%= fa_icon 'edit' %> Cập nhật hồ sơ
+          </button>
+          <button type="button" id="btn-cancel-profile-update" class="btn btn-default hidden">
+            Huỷ
+          </button>
+          <button type="button" id="btn-update-profile" class="btn btn-primary hidden">
+            Lưu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="box-body">
+      <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#personal_info_tab" data-toggle="tab">CÁ NHÂN</a></li>
+          <li><a href="#study_business_info_tab" data-toggle="tab">
+            <%= @is_student_product ? 'HỌC TẬP' : 'KINH DOANH' %>
+          </a></li>
+          <li><a href="#finance_info_tab" data-toggle="tab">TÀI CHÍNH</a></li>
+          <li><a href="#job_info_tab" data-toggle="tab">VIỆC LÀM</a></li>
+          <li><a href="#reference_info_tab" data-toggle="tab">THAM CHIẾU</a></li>
+        </ul>
+        <div class="tab-content">
+
+          <!-- PERSONAL TAB
+          ============================================= -->
+          <div class="tab-pane active" id="personal_info_tab">
+            <%= render partial: 'staff/partials/dynamic_forms/personal_info' %>
+          </div>
+
+          <!-- STUDY TAB
+          ============================================= -->
+          <div class="tab-pane" id="study_business_info_tab">
+            <%= if @is_student_product
+              render partial: 'staff/partials/dynamic_forms/study_info'
+            else
+              render partial: 'staff/partials/dynamic_forms/business_info'
+            end %>
+          </div>
+
+          <!-- FINANCE TAB
+          ============================================= -->
+          <div class="tab-pane" id="finance_info_tab">
+            <%= render partial: 'staff/partials/dynamic_forms/finance_info' %>
+          </div>
+
+          <!-- JOB TAB
+          ============================================= -->
+          <div class="tab-pane" id="job_info_tab">
+            <%= render partial: 'staff/partials/dynamic_forms/job_info' %>
+          </div>
+
+          <!-- REFERENCE TAB
+          ============================================= -->
+          <div class="tab-pane" id="reference_info_tab">
+            <%= render partial: 'staff/partials/dynamic_forms/reference_info' %>
+          </div>
+
+        </div><!-- /.tab-content -->
+      </div><!-- nav-tabs-custom -->
+    </div>
+  </div>
+<% end %>
+
+<script>
+  $(function () {
+    (function dynamicForm(){
+      let $btnEditProfile = $('#btn-edit-profile'),
+          $btnUpdateProfile = $('#btn-update-profile'),
+          $btnCancelProfileUpdate = $('#btn-cancel-profile-update'),
+          $btnArchiveProfile = $('#btn-archive-profile'),
+          $btnCreateContract = $('#btn-create-contract'),
+          $btnAssignStaff = $('#btn-assign-staff'),
+          $profileForm = $('#profile-form'),
+          $addMoreProfileBtn = $('#add-more-profile'),
+          $addMoreInstitution = $('#add-more-institution');
+
+      let toShowMode = function(){
+        let $editableFormControls = $profileForm.find('.editable'),
+            $selectableFormControls = $profileForm.find('.selectable'),
+            $hasErrorControls = $profileForm.find('.has-error'),
+            $helpBlockSpans = $profileForm.find('.help-block');
+
+        // Hide update + cancel buttons
+        $btnUpdateProfile.addClass('hidden');
+        $btnCancelProfileUpdate.addClass('hidden');
+        $addMoreProfileBtn.addClass('hidden');
+        $addMoreInstitution.addClass('hidden');
+
+        // Show up edit profile button
+        $btnEditProfile.removeClass('hidden');
+        $btnArchiveProfile.removeClass('hidden');
+        $btnCreateContract.removeClass('hidden');
+        $btnAssignStaff.removeClass('hidden');
+
+        // Disallow the form fields to be edited
+        $editableFormControls.attr('readonly', true);
+        $editableFormControls.attr('disabled', true);
+        $editableFormControls.addClass('form-control-plaintext');
+        $editableFormControls.removeClass('form-control');
+
+        $selectableFormControls.attr('disabled', true);
+
+        // Remove errors messages
+        $hasErrorControls.removeClass('has-error');
+        $helpBlockSpans.remove();
+      }
+
+      //
+      // Update profile
+      //
+      $btnEditProfile.click(function () {
+        let $t = $(this);
+        let $editableFormControls = $profileForm.find('.editable'),
+            $selectableFormControls = $profileForm.find('.selectable');
+        $t.addClass('hidden');
+
+        // Allow the form fields to be edited
+        $editableFormControls.removeAttr('readonly');
+        $editableFormControls.removeAttr('disabled');
+        $editableFormControls.removeClass('form-control-plaintext');
+        $editableFormControls.addClass('form-control');
+
+        $selectableFormControls.removeAttr('disabled');
+
+        // Show up update + cancel buttons
+        $btnUpdateProfile.removeClass('hidden');
+        $btnCancelProfileUpdate.removeClass('hidden');
+        $addMoreProfileBtn.removeClass('hidden');
+        $addMoreInstitution.removeClass('hidden');
+
+        // Hide archive, create and assign staff buttons
+        $btnArchiveProfile.addClass('hidden');
+        $btnCreateContract.addClass('hidden');
+        $btnAssignStaff.addClass('hidden');
+      });
+
+      //
+      // Submit profile form
+      //
+      $btnUpdateProfile.click(function () {
+        $.ajax({
+          url: $profileForm.action,
+          data: $profileForm.serialize(),
+          type: ($("input[name='_method']").val() || $profileForm.method),
+          success: function(res){
+            if($.isEmptyObject(res.errors)){
+              toShowMode();
+            } else {
+              $.each(res.errors, function(key, value) {
+                let prefix = $.isNumeric(key) ? '#form_values' : '#person',
+                    $input = $(prefix + "_" + key);
+                $input.parent().parent().addClass('has-error');
+                $('<span class="help-block">' + value.join('<br>') +'</span>').insertAfter($input)
+              });
+            }
+          }
+        });
+      });
+
+      //
+      // Cancel profile update
+      //
+      $btnCancelProfileUpdate.click(function () {
+        let changed = $profileForm.data('changed');
+        if(changed){
+          alert('The changes may not be saved');
+        }
+        location.reload();
+      });
+
+      $('#profile-form :input').change(function() {
+        $profileForm.data("changed", true);
+      });
+    })();
+  });
+</script>

@@ -1,0 +1,47 @@
+<% # Set the title attribute for this page
+   content_for :title do %>
+  Khách hàng
+<% end %>
+
+<% # Set the title of content
+   content_for :content_header do %>
+  <div class="row">
+    <div class="col-sm-3">
+
+    </div>
+
+    <div class="col-sm-9">
+      <div class="pull-right">
+        <%= link_to change_logs_staff_person_path(@person), class: 'btn btn-default bg-black' do %>
+          <%= fa_icon 'history' %> Xem change log
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="row">
+  <div class="col-sm-3">
+    <%= render partial: 'profile_summary' %>
+    <%= render partial: 'profile_documents' %>
+  </div>
+
+  <div class="col-sm-9">
+    <%= render partial: 'staff/partials/dynamic_forms/form' %>
+  </div>
+</div>
+
+<!-- Assign people owner modal form
+================================= -->
+<%= render partial: 'assign_people_owner_form.modal' %>
+
+<script>
+  $(function () {
+    (function setPeopleIdsForAssignPeopleOwnerForm() {
+      let $massAssignOwnerForm = $('#mass_assign_owner_form'),
+          $peopleIdsHiddenInput = $massAssignOwnerForm.find("input[name='mass_assign_owner[people_ids]']");
+
+      $peopleIdsHiddenInput.val(<%= @person.id %>);
+    })();
+  });
+</script>
