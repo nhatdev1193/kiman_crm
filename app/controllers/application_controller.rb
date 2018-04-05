@@ -25,4 +25,6 @@ class ApplicationController < ActionController::Base
 
     head 302, x_ajax_redirect_url: url
   end
+
+  # test
 end
